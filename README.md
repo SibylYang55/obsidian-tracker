@@ -18,6 +18,7 @@
 ## 安装
 
 1.直接在obsidian第三方插件市场安装使用。
+
 2.到该插件在GitHub的库中下载插件文件到本地，把文件放到obsidian库的plugins文件夹里。链接：
 ```
 https://github.com/SibylYang55/tracker/tree/main
@@ -25,7 +26,7 @@ https://github.com/SibylYang55/tracker/tree/main
 
 ## 使用
 
-<img width="1204" alt="SCR-20250504-tmpx" src="https://github.com/user-attachments/assets/a93da6b6-ae44-4d8d-a3d2-cc03ed0c1630" />
+<img width="886" alt="SCR-20250504-tmpx" src="https://github.com/user-attachments/assets/a93da6b6-ae44-4d8d-a3d2-cc03ed0c1630" />
 
 <img width="885" alt="SCR-20250519-qhbp" src="https://github.com/user-attachments/assets/54362723-caa6-4f97-90f2-dd27f5a9f29e" />
 
