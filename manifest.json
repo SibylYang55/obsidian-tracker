@@ -1,0 +1,11 @@
+{
+	"id": "tracker",
+	"name": "STracker",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Used for recording, you can set Boolean (day/week frequency), text, and number habits.",
+	"author": "SibylYang55",
+	"authorUrl": "https://github.com/SibylYang55",
+	"fundingUrl": "https://obsidian.md/pricing",
+	"isDesktopOnly": false
+}
