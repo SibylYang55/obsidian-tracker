@@ -1,0 +1,927 @@
+/* styles.css for Habit Tracker Plugin - Merged View */
+
+/* Add a class to the merged view container for specific styling */
+.habit-tracker-view {
+    padding: 10px;
+    overflow-y: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* --- Week Navigation Styles (Check-in Section) --- */
+.habit-tracker-view .habit-grid-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.habit-tracker-view .habit-grid-nav-button {
+    padding: 5px 10px;
+    border: 1px solid var(--interactive-accent);
+    border-radius: 4px;
+    background-color: var(--background-primary);
+    color: var(--interactive-accent);
+    cursor: pointer;
+    transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+.habit-tracker-view .habit-grid-nav-button:hover {
+    background-color: var(--background-modifier-hover);
+    color: var(--text-normal);
+}
+
+.habit-tracker-view .habit-grid-date-range {
+    font-weight: bold;
+    font-size: 1em;
+    color: var(--text-normal);
+    flex-grow: 1;
+    text-align: center;
+    min-width: 150px;
+}
+
+
+/* --- Habit Check-in Grid Layout --- */
+
+.habit-tracker-view .habit-grid-container {
+    display: grid;
+    /* grid-template-columns is set dynamically in JS */
+    grid-template-columns: minmax(100px, 1fr) repeat(7, minmax(35px, 0.5fr));
+    gap: 4px;
+    /* Gap for check-in grid */
+    margin-top: 0;
+    overflow-x: auto;
+    padding: 0;
+}
+
+.habit-tracker-view .habit-grid-header-row,
+.habit-tracker-view .habit-grid-row {
+    display: contents;
+}
+
+.habit-tracker-view .habit-grid-header-corner {
+    grid-column: 1;
+    grid-row: 1;
+    padding: 8px 5px;
+}
+
+/* Modified: Day Header to display day name and date on one row */
+.habit-tracker-view .habit-grid-day-header {
+    grid-column: auto;
+    grid-row: 1;
+    text-align: center;
+    font-weight: bold;
+    padding: 8px 5px;
+    display: flex;
+    flex-direction: row;
+    /* Changed to row */
+    align-items: center;
+    /* Center vertically */
+    justify-content: center;
+    /* Center horizontally */
+    gap: 4px;
+    /* Added gap between day name and date */
+}
+
+.habit-tracker-view .habit-grid-day-name {
+    font-size: 0.85em;
+}
+
+.habit-tracker-view .habit-grid-day-date {
+    font-size: 0.75em;
+    color: var(--text-muted);
+}
+
+.habit-tracker-view .habit-grid-habit-name {
+    grid-column: 1;
+    font-weight: bold;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.habit-tracker-view .habit-grid-checkin-cell {
+    grid-column: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* gap: 3px; */
+    /* Modified: Removed internal gap */
+    padding: 5px;
+    box-sizing: border-box;
+    min-height: 35px;
+    /* Ensure minimum height for alignment */
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.1s ease, color 0.1s ease;
+    position: relative;
+}
+
+.habit-tracker-view .habit-grid-checkin-cell:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+
+/* --- Status Circle Styles (Check-in View and Monthly Overview) --- */
+/* These styles apply to the .status-circle ELEMENT inside the cell for Check-in and Monthly Overview */
+
+.habit-tracker-view .status-circle {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px dashed var(--interactive-accent);
+    /* Default border for incomplete */
+    background-color: transparent;
+    /* Default background for incomplete */
+    box-sizing: border-box;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-image: none !important;
+    /* Added/Confirmed zero padding/margin for content */
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Base style for boolean completed (Daily, Goal <= 1) - solid fill */
+.habit-tracker-view .status-circle.is-boolean.is-completed {
+    border: none;
+    /* No border for completed */
+    background-color: var(--interactive-accent);
+    /* Solid fill for completed */
+}
+
+/* Base style for boolean incomplete - dashed border */
+.habit-tracker-view .status-circle.is-boolean.is-incomplete {
+    border: 2px dashed var(--interactive-accent);
+    background-color: transparent;
+}
+
+
+/* Base style for number and text habits */
+/* Note: text habit circles are mostly just containers or get emojis inside */
+.habit-tracker-view .status-circle.is-mood,
+.habit-tracker-view .status-circle.is-text {
+    border: 2px dashed var(--text-accent);
+    background-color: transparent;
+}
+
+/* Style when a non-boolean habit has a value (on the circle element) */
+.habit-tracker-view .status-circle.is-mood.has-value,
+.habit-tracker-view .status-circle.is-text.has-value {
+    /* border: none; */
+    /* For number/text circles, don't remove border automatically on has-value, let progress classes handle it */
+    opacity: 1 !important;
+}
+
+
+/* --- Goal Completion Visualization (Number Habits in Check-in/Overview - on the circle element) --- */
+/* These styles apply to the .status-circle ELEMENT inside the cell for Check-in and Monthly Overview */
+.habit-tracker-view .status-circle.is-mood.has-value.goal-progress-zero {
+    border: 2px dashed var(--text-warning) !important;
+    background-color: transparent !important;
+}
+
+.habit-tracker-view .status-circle.is-mood.has-value.goal-progress-medium {
+    border: none !important;
+    background-color: rgba(100, 120, 255, 0.5) !important;
+    /* Example color */
+}
+
+.habit-tracker-view .status-circle.is-mood.has-value.goal-progress-high {
+    border: none !important;
+    background-color: rgba(100, 120, 255, 0.8) !important;
+    /* Example color */
+}
+
+.habit-tracker-view .status-circle.is-mood.has-value.goal-met {
+    background-color: var(--interactive-accent) !important;
+    border: none !important;
+}
+
+.habit-tracker-view .status-circle.is-mood.has-value.has-value-no-goal {
+    border: 2px solid var(--text-normal) !important;
+    /* Solid border for entries without a goal */
+    background-color: transparent !important;
+}
+
+
+/* --- Boolean Progress Coloring (Applies to .status-circle in non-heatmap views) --- */
+/* These styles are applied by JS based on the daily or weekly completion percentage */
+/* Note: For Weekly habits, these colors apply *only* to the days marked TRUE, */
+/* and the color is based on the progress towards the WEEKLY goal. */
+
+/* 0% progress or no data - Handled by .is-boolean.is-incomplete */
+
+/* Low progress (> 0% to 33%) */
+.habit-tracker-view .status-circle.is-boolean.progress-low {
+    border: none !important;
+    /* Use solid fill for progress */
+    background-color: rgba(100, 120, 255, 0.3) !important;
+    /* Lighter accent color (adjust RGB and opacity as needed) */
+}
+
+/* Medium progress (> 33% to 66%) */
+.habit-tracker-view .status-circle.is-boolean.progress-medium {
+    border: none !important;
+    background-color: rgba(100, 120, 255, 0.6) !important;
+    /* Medium accent color */
+}
+
+/* High progress (> 66% to 99%) */
+.habit-tracker-view .status-circle.is-boolean.progress-high {
+    border: none !important;
+    background-color: rgba(100, 120, 255, 0.9) !important;
+    /* Darker accent color */
+}
+
+/* When the goal is met or exceeded (>= 100%) for the period (day or week) */
+.habit-tracker-view .status-circle.is-boolean.goal-met {
+    border: none !important;
+    background-color: var(--interactive-accent) !important;
+    /* Full accent color */
+}
+
+/* Ensure the standard completed style is still correct for daily frequency habits with goal <= 1 */
+/* Also used for weekly habits checked in with 0 weekly progress */
+/* No changes needed here, priority handled by specificity */
+/* .habit-tracker-view .status-circle.is-boolean.is-completed {} */
+
+
+/* --- Value/Text Display Styles (next to circle in Check-in/Overview - only for text now) --- */
+/* Modified to show for daily boolean with goal > 1 */
+.habit-tracker-view .status-value-display {
+    font-size: 0.75em;
+    color: var(--text-normal);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    min-width: 0;
+    display: none;
+    /* Hidden by default, shown by JS for specific types */
+}
+
+/* --- Emoji Display Styles (inside circle in Check-in/Overview) --- */
+/* Applies to the .status-circle element when it contains an emoji span */
+.habit-tracker-view .status-circle.has-emoji {
+    border: none !important;
+    background-color: transparent !important;
+    /* Ensure circle itself is transparent */
+    /* Size and display properties inherited from .status-circle */
+}
+
+/* Applies to the span holding the emoji inside the circle */
+.habit-tracker-view .status-circle.has-emoji .status-emoji {
+    font-size: 18px;
+    /* Adjust this value (e.g., 16px - 20px) */
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    max-height: 100%;
+    padding: 0 !important;
+    margin: 0 !important;
+    text-align: center;
+}
+
+
+/* --- Input Modal Specific Styles --- */
+.habit-text-input {
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* --- Settings Tab Styles --- */
+
+.new-habit-inputs-container {
+    margin-bottom: 15px;
+}
+
+.new-habit-inputs-container .setting-item {
+    display: flex;
+}
+
+/* Hiding number specific options when the container doesn't have the 'show-number-options' class */
+.new-habit-inputs-container:not(.show-number-options) .number-option-setting {
+    display: none;
+}
+
+/* Hiding stats type option when the container doesn't have the 'show-number-options' class (stats type is only for number) */
+.new-habit-inputs-container:not(.show-number-options) .stats-type-option-setting {
+    display: none;
+}
+
+
+/* Hiding boolean specific options when the container doesn't have the 'show-boolean-options' class */
+.new-habit-inputs-container:not(.show-boolean-options) .boolean-option-setting {
+    display: none;
+}
+
+
+/* Ensure edit modal options are flex by default, visibility controlled by JS */
+.edit-number-option {
+    display: flex;
+}
+
+.edit-stats-type-option {
+    display: flex;
+}
+
+.edit-boolean-option {
+    display: flex;
+}
+
+
+/* --- Statistics Section Styles --- */
+.habit-tracker-view .habit-stats-section-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    flex-grow: 1;
+    min-height: 0;
+}
+
+.habit-tracker-view .habit-stats-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.habit-tracker-view .habit-stats-period-switch {
+    display: flex;
+    gap: 5px;
+}
+
+/* Modified: Styled Stats Period Buttons like Check-in Nav Buttons */
+.habit-tracker-view .habit-stats-period-button {
+    padding: 5px 10px;
+    border: 1px solid var(--interactive-accent);
+    border-radius: 4px;
+    background-color: var(--background-primary);
+    color: var(--interactive-accent);
+    cursor: pointer;
+    transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+.habit-tracker-view .habit-stats-period-button:hover {
+    background-color: var(--background-modifier-hover);
+    color: var(--text-normal);
+}
+
+/* Added: Active state for Stats Period Buttons */
+.habit-tracker-view .habit-stats-period-button.is-active {
+    background-color: var(--interactive-accent);
+    color: var(--text-inverted);
+    border-color: var(--interactive-accent);
+}
+
+
+.habit-tracker-view .habit-stats-date-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.habit-tracker-view .habit-stats-nav-button {
+    padding: 5px 10px;
+    border: 1px solid var(--interactive-accent);
+    border-radius: 4px;
+    background-color: var(--background-primary);
+    color: var(--interactive-accent);
+    cursor: pointer;
+    transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+.habit-tracker-view .habit-stats-nav-button:hover {
+    background-color: var(--background-modifier-hover);
+    color: var(--text-normal);
+}
+
+.habit-tracker-view .habit-stats-date-display {
+    font-weight: bold;
+    font-size: 1em;
+    color: var(--text-normal);
+}
+
+.habit-tracker-view .habit-stats-refresh-button {
+    padding: 5px 10px;
+    border: 1px solid var(--interactive-accent);
+    border-radius: 4px;
+    background-color: var(--background-primary);
+    color: var(--interactive-accent);
+    cursor: pointer;
+    transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+.habit-tracker-view .habit-stats-refresh-button:hover {
+    background-color: var(--background-modifier-hover);
+    color: var(--text-normal);
+}
+
+
+.habit-tracker-view .habit-stats-content {
+    margin-top: 15px;
+    overflow-y: auto;
+    flex-grow: 1;
+    min-height: 0;
+}
+
+.habit-tracker-view .habit-stats-section {
+    margin-bottom: 20px;
+}
+
+.habit-tracker-view .habit-stats-section h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--background-modifier-border);
+    padding-bottom: 5px;
+}
+
+/* Added: Style for the stats summary container to display items inline */
+.habit-tracker-view .habit-stats-summary {
+    display: flex;
+    flex-wrap: wrap;
+    /* Allow wrapping on smaller screens */
+    gap: 10px;
+    /* Adjusted gap between inline stat paragraphs */
+    margin-bottom: 10px;
+    /* Space below the stats summary */
+    align-items: center;
+    /* Vertically align items */
+}
+
+/* Modified: Style for the individual stat paragraphs to be inline */
+.habit-tracker-view .habit-stats-section p.inline-stats-paragraph {
+    margin: 0;
+    /* Remove default paragraph margin */
+    font-size: 0.9em;
+    color: var(--text-muted);
+    display: inline-flex;
+    /* Use inline-flex to align content within the paragraph */
+    align-items: center;
+    /* Vertically center content within the paragraph */
+    /* Add padding/margin if needed to control spacing between paragraphs */
+    padding-right: 10px;
+    /* Add some space after each stat paragraph */
+}
+
+/* Added: Style for the specific stat values to make them prominent */
+.habit-tracker-view .habit-stats-section .stat-value {
+    font-weight: bold;
+    color: var(--text-normal);
+    /* Use normal text color for emphasis */
+    /* You can add more styles here, e.g., color: var(--interactive-accent); */
+}
+
+/* Added: Optional style for units and denominators if needed */
+.habit-tracker-view .habit-stats-section .stat-unit,
+.habit-tracker-view .habit-stats-section .stat-denominator {
+    font-size: 0.8em;
+    /* Slightly smaller font size */
+    color: var(--text-muted);
+    /* Keep muted color */
+}
+
+/* Added: Style for the detailed text stat items */
+.habit-tracker-view .habit-stats-section p.text-stat-detail {
+    margin-left: 15px;
+    /* Indent detailed text stats */
+    /* Inherits other styles from .inline-stats-paragraph */
+}
+
+
+.habit-tracker-view hr {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: none;
+    border-top: 1px solid var(--background-modifier-border);
+}
+
+
+/* --- Statistics Section - Visualization Area --- */
+.habit-tracker-view .habit-visualization-container {
+    width: 100%;
+    /* Take full width of visualization container */
+    /* max-width: 800px; */ /* Removed this line for full width */
+    margin-top: 15px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    display: flex;
+    justify-content: center;
+}
+
+
+/* --- Monthly Overview (Grid Layout) --- */
+/* Modified: Monthly Overview (Grid Layout) - Main container is a grid */
+.habit-tracker-view .habit-monthly-overview-grid {
+    display: grid;
+    /* Added grid display */
+    /* grid-template-columns and gap set dynamically in JS */
+    padding: 0;
+    margin-top: 0;
+    overflow-x: auto;
+}
+
+/* Modified: Rows should behave as contents in the grid */
+.habit-tracker-view .monthly-overview-header-row,
+.habit-tracker-view .monthly-overview-habit-row {
+    display: contents;
+    /* Reverted to contents */
+}
+
+
+/* Modified: Habit Name column (first item in grid row) */
+.habit-tracker-view .habit-grid-habit-name {
+    grid-column: 1;
+    /* Added grid property */
+    font-weight: bold;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Fixed width can still be helpful for the first column */
+    width: 100px;
+    /* Example fixed width - Adjust as needed */
+    flex-shrink: 0;
+    /* Removed margin-right as grid gap handles it */
+    /* margin-right: 4px; */
+}
+
+
+/* Modified: Daily Header Cells (Date Number Only) in Monthly Overview - Grid Item Styling */
+.habit-tracker-view .monthly-overview-day-header {
+    grid-column: auto;
+    /* Added grid property */
+    grid-row: 1;
+    /* Added grid property to place in header row */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    /* Match heatmap cell size */
+    height: 20px;
+    /* Match heatmap cell size */
+    font-size: 0.7em;
+    color: var(--text-muted);
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    /* Removed margin-right as grid gap handles it */
+    /* margin-right: 1px; */
+}
+
+/* Highlight today in Monthly Overview header */
+.habit-tracker-view .monthly-overview-day-header.is-today {
+    font-weight: bold;
+    color: var(--text-normal);
+    /* Or highlight color */
+}
+
+
+/* Modified: Monthly Overview Data Cells (inherits from .habit-grid-checkin-cell) - Grid Item Styling */
+.habit-tracker-view .habit-grid-checkin-cell.monthly-overview-data-cell {
+    grid-column: auto;
+    /* Added grid property */
+    /* grid-row set implicitly by display: contents on parent row */
+    display: flex;
+    /* Ensure flexbox is used inside cell for content alignment */
+    align-items: center;
+    justify-content: center;
+    /* Center horizontally */
+    width: 20px;
+    /* Fixed width */
+    height: 20px;
+    /* Fixed height */
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    /* Removed margin-right as grid gap handles it */
+    /* margin-right: 1px; */
+}
+
+
+/* Ensure the number span inside the date header is centered and takes minimal space */
+.habit-tracker-view .monthly-overview-day-header .daily-date-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    /* Added/Confirmed zero padding/margin for content */
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+
+/* --- Heatmap Styles (Yearly View) --- */
+/* Applies to cells in the yearly heatmap grid */
+
+.habit-tracker-view .habit-stats-yearly-heatmap-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    /* Gap between monthly heatmap blocks */
+    justify-content: center;
+    /* Center the blocks if they don't fill the width */
+}
+
+.habit-tracker-view .habit-stats-monthly-heatmap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center month label and grid */
+    gap: 4px;
+    /* Gap between month label and day labels/grid */
+    min-width: 100px;
+    /* Ensure a minimum width for each month block */
+}
+
+.habit-tracker-view .monthly-heatmap-label {
+    font-weight: bold;
+    font-size: 0.9em;
+    color: var(--text-normal);
+    text-align: center;
+}
+
+.habit-tracker-view .monthly-heatmap-dayofweek-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    /* Smaller gap for day labels */
+    width: 100%;
+    /* Match the grid width */
+}
+
+.habit-tracker-view .monthly-heatmap-dayofweek-label {
+    text-align: center;
+    font-size: 0.6em;
+    color: var(--text-muted);
+}
+
+
+.habit-tracker-view .heatmap-grid-month {
+    display: grid;
+    /* grid-template-columns: repeat(7, 1fr); */
+    /* Set in JS based on week start */
+    gap: 1px;
+    /* Gap between heatmap cells */
+    width: 100%;
+    /* Ensure grid takes full width of its container */
+}
+
+/* Modified: Style heatmap cells to *be* the visualization unit */
+.habit-tracker-view .heatmap-cell {
+    width: 20px;
+    /* Fixed size for heatmap cells */
+    height: 20px;
+    /* Fixed size for heatmap cells */
+    border-radius: 50%;
+    /* Make it a circle */
+    box-sizing: border-box;
+    /* Include border in size */
+    display: flex;
+    /* Use flex for potential text/emoji centering */
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6em;
+    /* Smaller font for text/emoji */
+    overflow: hidden;
+    /* Hide overflowing content */
+    text-overflow: ellipsis;
+    /* Add ellipsis for overflowing text */
+    white-space: nowrap;
+    /* Prevent text wrapping */
+    cursor: pointer;
+    /* Make heatmap cells clickable */
+    transition: background-color 0.1s ease, border-color 0.1s ease;
+    /* Add transition */
+
+    /* Default style for empty/incomplete (overrides previous default border/background) */
+    background-color: transparent;
+    border: 2px dashed var(--background-modifier-border);
+    /* Represents no entry */
+}
+
+.habit-tracker-view .heatmap-cell.empty {
+    background-color: transparent;
+    border: none;
+    cursor: default;
+    /* No pointer on empty cells */
+}
+
+.habit-tracker-view .heatmap-cell.is-outside-year {
+    background-color: var(--background-modifier-hover);
+    border: none;
+    opacity: 0.5;
+    cursor: default;
+    /* No pointer on outside year cells */
+}
+
+.habit-tracker-view .heatmap-cell.is-today {
+    border: 2px solid var(--text-highlight-bg);
+    /* Highlight today's cell */
+}
+
+
+/* --- Heatmap Coloring (Applies directly to .heatmap-cell) --- */
+
+/* Boolean (Daily Goal <= 1): Completed */
+/* Boolean (Daily Goal > 1): Progress (>0% to 33%) */
+/* Boolean (Weekly): Progress (>0% to 33%) - Applies only to checked-in days */
+/* Number: Progress > 0% to 50% */
+.habit-tracker-view .heatmap-cell.progress-low,
+.habit-tracker-view .heatmap-cell.goal-progress-medium {
+    /* Goal progress medium (number) also uses this level color */
+    border: none !important;
+    /* Remove dashed border */
+    background-color: rgba(100, 120, 255, 0.3);
+    /* Lighter accent color */
+}
+
+/* Boolean (Daily Goal > 1): Medium Progress (>33% to 66%) */
+/* Boolean (Weekly): Medium Progress (>33% to 66%) - Applies only to checked-in days */
+/* Number: Progress > 50% to 99% */
+.habit-tracker-view .heatmap-cell.progress-medium,
+.habit-tracker-view .heatmap-cell.goal-progress-high {
+    /* Goal progress high (number) also uses this level color */
+    border: none !important;
+    /* Remove dashed border */
+    background-color: rgba(100, 120, 255, 0.6);
+    /* Medium accent color */
+}
+
+/* Boolean (Daily Goal > 1): High Progress (>66% to 99%) */
+/* Boolean (Weekly): High Progress (>66% to 99%) - Applies only to checked-in days */
+.habit-tracker-view .heatmap-cell.progress-high {
+    border: none !important;
+    /* Remove dashed border */
+    background-color: rgba(100, 120, 255, 0.9);
+    /* Darker accent color */
+}
+
+/* Boolean (Daily Goal <= 1): Completed */
+/* Boolean (Daily Goal > 1): Goal Met (>= 100%) */
+/* Boolean (Weekly): Goal Met (>= 100%) - Applies only to checked-in days */
+/* Number: Goal Met (>= 100%) */
+.habit-tracker-view .heatmap-cell.goal-met,
+.habit-tracker-view .heatmap-cell.is-boolean.is-completed {
+    /* is-completed also uses full color for daily <= 1 */
+    border: none !important;
+    /* Remove dashed border */
+    background-color: var(--interactive-accent);
+    /* Full accent color */
+}
+
+/* Number: Value is 0 but goal > 0 */
+.habit-tracker-view .heatmap-cell.is-mood.has-value.goal-progress-zero {
+    border: 2px dashed var(--text-warning) !important;
+    /* Use warning color dashed border */
+    background-color: transparent !important;
+    /* Keep background transparent */
+}
+
+/* Number: Has value but no goal set */
+.habit-tracker-view .heatmap-cell.is-mood.has-value.has-value-no-goal {
+    border: 2px solid var(--text-normal) !important;
+    /* Use text color border */
+    background-color: transparent !important;
+    /* Keep background transparent */
+}
+
+
+/* Text: Has value */
+.habit-tracker-view .heatmap-cell.is-text.has-value {
+    background-color: transparent;
+    /* No background fill for text */
+    border: 2px dashed var(--text-accent);
+    /* Use text accent dashed border */
+    /* Opacity should be 1 by default */
+}
+
+/* Text: Display value inside cell */
+.habit-tracker-view .heatmap-cell .heatmap-text-value {
+    color: var(--text-normal);
+    /* Text color */
+    font-size: 0.6em;
+    /* Smaller font for text/emoji */
+    text-align: center;
+    /* Center text */
+    width: 100%;
+    /* Take full width */
+    height: 100%;
+    /* Take full height */
+    display: flex;
+    /* Use flex to center content */
+    align-items: center;
+    justify-content: center;
+    /* Center horizontally */
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    /* Prevent text overflow */
+    text-overflow: ellipsis;
+    /* Show ellipsis on overflow */
+    white-space: nowrap;
+    /* Prevent wrapping */
+}
+
+/* Modified: Text heatmap cell text size */
+.habit-tracker-view .heatmap-cell.is-text .heatmap-text-value {
+    font-size: 0.7em; /* Increased font size for text heatmap */
+}
+
+
+/* Text: Emoji inside cell (adjusts font size) */
+.habit-tracker-view .heatmap-cell.is-emoji {
+    background-color: transparent !important;
+    /* No background fill */
+    border: none !important;
+    /* No border for emoji cell */
+}
+
+.habit-tracker-view .heatmap-cell.is-emoji .heatmap-text-value {
+    font-size: 1.5em;
+    /* Larger font size for emoji */
+}
+
+
+/* --- Chart Styles (Yearly View - for Number Habits) --- */
+/* Applies to canvas elements for bar/line/combo charts */
+.habit-tracker-view .habit-chart-container {
+    width: 100%;
+    /* Take full width of visualization container */
+    /* max-width: 800px; */ /* Removed this line for full width */
+    height: 300px;
+    /* Fixed height for the chart */
+    margin: 0 auto;
+    /* Center the chart container */
+}
+
+.habit-tracker-view .habit-chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* --- Modal Styles (Number Input Modal) --- */
+.current-number-entries {
+    margin-bottom: 15px;
+}
+
+.modal-entries-list-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.modal-entries-list {
+    list-style: disc;
+    margin-left: 20px;
+    margin-bottom: 10px;
+    padding: 0;
+}
+
+.modal-entries-list li {
+    margin-bottom: 3px;
+}
+
+.modal-total-display {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.modal-no-entries {
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+.modal-button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
